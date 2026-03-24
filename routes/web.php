@@ -30,6 +30,7 @@ Route::middleware(['auth', 'role:admin'])->get('/admin', function () {
     return Inertia::render('RolePage', ['role' => 'Admin']);
 });
 
+
 Route::middleware(['auth', 'role:manager'])->get('/manager', function () {
     return Inertia::render('RolePage', ['role' => 'Manager']);
 });
