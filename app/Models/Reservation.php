@@ -15,6 +15,7 @@ class Reservation extends Model
         'check_in_date',
         'check_out_date',
         'status',
+        'payment_session_id'
     ];
 
     public function client()
