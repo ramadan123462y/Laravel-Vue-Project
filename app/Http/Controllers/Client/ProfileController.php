@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\UpdateProfileRequest;
+use App\Models\Country;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,12 +14,12 @@ class ProfileController extends Controller
 {
     public function edit(): Response
     {
-        $user = auth()->user();
+        $user = auth()->user()->load('country:id,official_name');
 
-        $countries = DB::table('lc_countries')
+        $countries = Country::query()
+            ->select(['id', 'official_name'])
             ->orderBy('official_name')
-            ->pluck('official_name')
-            ->map(fn ($country) => (string) $country)
+            ->get()
             ->values()
             ->all();
 
@@ -34,6 +34,7 @@ class ProfileController extends Controller
         $user = auth()->user();
 
         $data = $request->validated();
+        $data['country_id'] = $user->hasRole('client') ? ($data['country_id'] ?? null) : null;
 
         if ($request->hasFile('avatar_image')) {
             if (
