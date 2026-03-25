@@ -47,9 +47,17 @@ const avatarInput = ref(null)
 const form = useForm({
   name: props.user?.name ?? '',
   email: props.user?.email ?? '',
-  country: props.user?.country ?? '',
+  country_id: props.user?.country_id ?? null,
   gender: props.user?.gender ?? '',
   avatar_image: null,
+})
+
+const selectedCountryName = computed(() => {
+  const selectedCountry = props.countries.find(
+    (country) => Number(country.id) === Number(form.country_id)
+  )
+
+  return selectedCountry?.official_name ?? props.user?.country?.official_name ?? 'Select country'
 })
 
 const previewImage = computed(() => {
@@ -236,7 +244,7 @@ const submit = () => {
                     <span class="flex min-w-0 items-center gap-2 truncate">
                       <MapPin class="h-4 w-4 shrink-0 text-[#5b708b]" />
                       <span class="truncate">
-                        {{ form.country && form.country !== 'NULL' ? form.country : 'Select country' }}
+                        {{ selectedCountryName }}
                       </span>
                     </span>
                     <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 text-[#5b708b]" />
@@ -259,13 +267,13 @@ const submit = () => {
                     <CommandList class="max-h-64 bg-white">
                       <CommandGroup class="bg-white">
                         <CommandItem
-                          v-for="country in countries.filter(c => c && c !== 'NULL')"
-                          :key="country"
-                          :value="country"
+                          v-for="country in countries"
+                          :key="country.id"
+                          :value="country.official_name"
                           class="cursor-pointer bg-white text-[#0c1a2e] aria-selected:bg-[#eaf1f8] aria-selected:text-[#0c1a2e] data-[selected=true]:bg-[#eaf1f8] data-[selected=true]:text-[#0c1a2e]"
                           @select="
                             () => {
-                              form.country = country
+                              form.country_id = Number(country.id)
                               countryOpen = false
                             }
                           "
@@ -274,11 +282,11 @@ const submit = () => {
                             :class="
                               cn(
                                 'mr-2 h-4 w-4 text-[#0c1a2e]',
-                                form.country === country ? 'opacity-100' : 'opacity-0'
+                                Number(form.country_id) === Number(country.id) ? 'opacity-100' : 'opacity-0'
                               )
                             "
                           />
-                          {{ country }}
+                          {{ country.official_name }}
                         </CommandItem>
                       </CommandGroup>
                     </CommandList>
@@ -286,8 +294,8 @@ const submit = () => {
                 </PopoverContent>
               </Popover>
 
-              <p v-if="form.errors.country" class="text-sm text-red-500">
-                {{ form.errors.country }}
+              <p v-if="form.errors.country_id" class="text-sm text-red-500">
+                {{ form.errors.country_id }}
               </p>
             </div>
 

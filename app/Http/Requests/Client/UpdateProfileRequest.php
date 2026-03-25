@@ -22,7 +22,7 @@ class UpdateProfileRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'email')->ignore($this->user()?->id),
             ],
-            'country' => ['nullable', 'string', 'max:255'],
+            'country_id' => ['nullable', 'integer', 'exists:lc_countries,id'],
             'gender' => ['nullable', 'in:male,female'],
             'avatar_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
