@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\AdminDashboard\RoomController;
+
+
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -44,14 +45,4 @@ Route::middleware(['auth', 'role:client'])->get('/client', function () {
     return Inertia::render('RolePage', ['role' => 'Client']);
 });
 
-// ======================== Admin ====================
-Route::prefix('admin')->as('admin.')->group(function () {
 
-
-    Route::prefix('rooms')->as('rooms.')->group(function () {
-        Route::get('/',         [RoomController::class, 'index'])->name('index');
-        Route::post('/',        [RoomController::class, 'store'])->name('store');
-        Route::put('/{room}',   [RoomController::class, 'update'])->name('update');
-        Route::delete('/{room}', [RoomController::class, 'destroy'])->name('destroy');
-    });
-});
