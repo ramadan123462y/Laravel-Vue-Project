@@ -24,8 +24,16 @@ class RoomController extends Controller
 
     public function index()
     {
+        $filters = request()->only(['search', 'sort', 'direction']);
+
         return Inertia::render('AdminDashboard/Rooms/Index', [
-            'rooms'  => $this->roomRepository->get(['floor']),
+            'rooms'  => $this->roomRepository->paginate(
+                5,
+                ['floor'],
+                [],
+                $filters
+            ),
+            'filters' => $filters,
             'floors' => $this->floorRepository->get(),
         ]);
     }
