@@ -2,6 +2,8 @@
 import { SidebarProvider } from '@/components/ui/sidebar'
 import AdminSidebar from './admin/AdminSidebar.vue'
 import AdminTopbar from './admin/AdminTopbar.vue'
+import FlashMessage  from '@/components/FlashMessage.vue'
+
 </script>
 
 <template>
@@ -17,5 +19,6 @@ import AdminTopbar from './admin/AdminTopbar.vue'
                 </main>
             </div>
         </div>
+       <FlashMessage />
     </SidebarProvider>
 </template>
