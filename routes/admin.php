@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminDashboard\ManagerController;
 use App\Http\Controllers\AdminDashboard\ReceptionistController;
 use App\Http\Controllers\AdminDashboard\RoomController;
 use Illuminate\Support\Facades\Route;
@@ -28,3 +29,15 @@ Route::middleware(['auth', 'logs-out-banned-user', 'role:admin|manager'])->group
         Route::patch('/{receptionist}/unban', [ReceptionistController::class, 'unban'])->name('unban');
     });
 });
+
+// ======================== Managers ====================
+Route::prefix('managers')->as('managers.')->group(function () {
+    Route::get('/',                 [ManagerController::class, 'index'])->name('index');
+    Route::get('/create',           [ManagerController::class, 'create'])->name('create');
+    Route::post('/',                [ManagerController::class, 'store'])->name('store');
+    Route::get('/{manager}',        [ManagerController::class, 'show'])->name('show');
+    Route::get('/{manager}/edit',   [ManagerController::class, 'edit'])->name('edit');
+    Route::post('/{manager}',       [ManagerController::class, 'update'])->name('update');
+    Route::delete('/{manager}',     [ManagerController::class, 'destroy'])->name('destroy');
+});
+
