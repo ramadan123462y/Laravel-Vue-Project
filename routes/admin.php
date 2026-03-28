@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminDashboard\FloorController;
 use App\Http\Controllers\AdminDashboard\ManagerController;
+use App\Http\Controllers\AdminDashboard\ProfileController;
 use App\Http\Controllers\AdminDashboard\ReceptionistController;
 use App\Http\Controllers\AdminDashboard\RoomController;
 use App\Http\Controllers\AdminDashboard\ReservationController;
@@ -25,6 +26,11 @@ Route::middleware(['auth', 'logs-out-banned-user', 'role:admin|manager'])->group
         }
         );
     });
+
+Route::middleware(['auth', 'logs-out-banned-user', 'role:admin|manager|receptionist'])->prefix('profile')->as('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'index'])->name('index');
+    Route::patch('/', [ProfileController::class, 'update'])->name('update');
+});
 
 // ======================== Managers ====================
 Route::prefix('managers')->as('managers.')->group(function () {
