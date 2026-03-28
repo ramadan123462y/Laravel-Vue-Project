@@ -44,11 +44,11 @@ Route::prefix('floors')->as('floors.')->group(function () {
     Route::delete('/{floor}',     [FloorController::class, 'destroy'])->name('destroy');
 });
 
-    Route::prefix('rooms')->as('rooms.')->group(function () {
-        Route::get('/', [RoomController::class, 'index'])->name('index');
-        Route::get('/create', [RoomController::class, 'create'])->name('create');
-        Route::post('/', [RoomController::class, 'store'])->name('store');
-        Route::get('/{room}/edit', [RoomController::class, 'edit'])->name('edit');
-        Route::post('/{room}', [RoomController::class, 'update'])->name('update');
-        Route::delete('/{room}', [RoomController::class, 'destroy'])->name('destroy');
-    });
+Route::prefix('rooms')->as('rooms.')->middleware(['auth', 'role:admin|manager'])->group(function () {
+    Route::get('/', [RoomController::class, 'index'])->name('index');
+    Route::get('/create', [RoomController::class, 'create'])->name('create');
+    Route::post('/', [RoomController::class, 'store'])->name('store');
+    Route::get('/{room}/edit', [RoomController::class, 'edit'])->name('edit');
+    Route::post('/{room}', [RoomController::class, 'update'])->name('update');
+    Route::delete('/{room}', [RoomController::class, 'destroy'])->name('destroy');
+});
