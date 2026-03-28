@@ -12,10 +12,16 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         then: function () {
+
             Route::middleware('web')
                 ->prefix('client')
                 ->name('client.')
                 ->group(base_path('routes/clients.php'));
+
+            Route::middleware('web')
+                ->prefix('admins')
+                ->name('admins.')
+                ->group(base_path('routes/admin.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -24,11 +30,14 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
         $middleware->alias([
-        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-    
-        
-    ]);
-        
+
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+
+
+        ]);
+
+
+
 
         $middleware->web(append: [
             HandleInertiaRequests::class,

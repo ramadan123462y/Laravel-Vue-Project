@@ -59,8 +59,12 @@ class RoomRepository implements RoomRepositoryInterface
         $query->delete();
     }
 
-    public function paginate(int $perPage = 15, array $withRelational = [], array $conditions = []): LengthAwarePaginator
-    {
+    public function paginate(
+        int $perPage = 15,
+        array $withRelational = [],
+        array $conditions = [],
+        array $filters = []
+    ): LengthAwarePaginator {
         $query = Room::query();
 
         if (!empty($withRelational)) {
@@ -71,9 +75,31 @@ class RoomRepository implements RoomRepositoryInterface
             $query->where($column, $value);
         }
 
-        $query->orderBy('created_at', 'desc');
+        /* ================= SEARCH ================= */
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
 
-        return $query->paginate($perPage);
+            $query->where(function ($q) use ($search) {
+                $q->where('id', $search)
+                    ->orWhere('number', 'like', "%{$search}%");
+            });
+        }
+
+        /* ================= SORT ================= */
+        if (!empty($filters['sort'])) {
+            $direction = $filters['direction'] ?? 'asc';
+
+
+            $allowedSorts = ['id', 'number', 'capacity', 'price', 'created_at'];
+
+            if (in_array($filters['sort'], $allowedSorts)) {
+                $query->orderBy($filters['sort'], $direction);
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        return $query->paginate($perPage)->withQueryString();
     }
 
     public function exists(array $conditions): bool
