@@ -31,9 +31,8 @@ class ClientController extends Controller
 
     public function toggleApproval(User $client)
     {
-        $client->update([
-            'is_approved' => !$client->is_approved
-        ]);
+        $client->is_approved = !$client->is_approved;
+        $client->save();
 
         $status = $client->is_approved ? 'Approved' : 'Unapproved';
         return back()->with('success', "Client account has been {$status}.");

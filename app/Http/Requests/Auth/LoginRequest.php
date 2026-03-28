@@ -62,11 +62,11 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        // Check if user is approved (excluding admins)
-        if ($user && !$user->is_approved && !$user->hasRole('admin')) {
+        $user->refresh(); // Force fresh data from DB
+
+        // Check if user is approved (Only applicable to Clients)
+        if ($user && $user->is_approved === false && $user->hasRole('client')) {
             Auth::logout();
-            // Optional: You might not want to hit rate limiter for unapproved accounts
-            // as they have correct credentials but are just not approved yet.
             
             throw ValidationException::withMessages([
                 'email' => 'Your account is pending approval by an administrator. Please try again later.',

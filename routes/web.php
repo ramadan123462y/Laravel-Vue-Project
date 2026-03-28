@@ -43,4 +43,4 @@ Route::middleware(['auth', 'logs-out-banned-user', 'role:receptionist'])->get('/
 
 Route::middleware(['auth', 'logs-out-banned-user', 'role:client'])->get('/client', function () {
     return Inertia::render('RolePage', ['role' => 'Client']);
-});
+})->name('client.home');

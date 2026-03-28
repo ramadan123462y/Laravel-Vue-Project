@@ -8,8 +8,8 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
 
-    return Inertia::render('AdminDashboard/Admin');
-});
+    return redirect()->route('dashboard');
+})->name('home');
 
 Route::prefix('rooms')->as('rooms.')->group(function () {
 

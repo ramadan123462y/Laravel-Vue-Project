@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware(['auth', 'logs-out-banned-user', 'role:admin|manager'])->group(function () {
-    Route::get('/', fn() => Inertia::render('AdminDashboard/Admin'))->name('dashboard');
+    Route::get('/', fn() => Inertia::render('AdminDashboard/Admin'))->name('admin.index');
 
 
     Route::prefix('receptionists')->as('receptionists.')->group(function () {
