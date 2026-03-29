@@ -127,9 +127,14 @@ class ClientController extends Controller
 
         $data = $request->validated();
 
-        if ($request->hasFile('avatar_image')) {
-            $data['avatar_image'] = $request->file('avatar_image')
-                ->store('avatars', 'public');
+         if ($request->hasFile('avatar_image')) {
+            $file = $request->file('avatar_image');
+
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->storeAs('avatars', $filename, 'public');
+
+            $data['avatar_image'] = $filename; 
         } else {
             unset($data['avatar_image']);
         }
