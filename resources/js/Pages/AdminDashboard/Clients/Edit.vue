@@ -63,17 +63,44 @@ function submit() {
         <div class="bg-white rounded-2xl border border-gray-200 p-8">
             <form @submit.prevent="submit" class="space-y-6">
                 <!-- Avatar -->
-                <div>
-                    <p class="text-sm font-medium text-gray-700 mb-3">Image</p>
-                    <div class="w-20 h-20 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0">
-    <img
-        :src="previewUrl || currentAvatar"
-        @error="($event.target.src = '/images/default.png')"
-        class="w-full h-full object-cover"
-    />
-</div>
-                </div>
+          <div class="flex items-center gap-6">
+    <div class="relative group">
+        <div class="w-24 h-24 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0 relative">
+            <img
+                :src="previewUrl || currentAvatar"
+                @error="($event.target.src = '/images/default.png')"
+                class="w-full h-full object-cover"
+            />
+            <div 
+                @click="$refs.fileInput.click()"
+                class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+            >
+                <span class="text-white text-xs font-medium">Change</span>
+            </div>
+        </div>
+    </div>
 
+    <div>
+        <p class="text-sm font-medium text-gray-700">Profile Picture</p>
+        <p class="text-xs text-gray-400 mb-3">JPG, jPEG only</p>
+        
+        <input
+            type="file"
+            ref="fileInput"
+            class="hidden"
+            accept="image/*"
+            @change="handleFile"
+        />
+        
+        <button
+            type="button"
+            @click="$refs.fileInput.click()"
+            class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
+            Upload New Image
+        </button>
+    </div>
+</div>
                 <div class="border-t border-gray-100"></div>
 
                 <!-- Name -->
