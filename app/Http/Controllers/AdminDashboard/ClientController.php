@@ -40,7 +40,7 @@ class ClientController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -93,8 +93,13 @@ class ClientController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('avatar_image')) {
-            $data['avatar_image'] = $request->file('avatar_image')
-                ->store('avatars', 'public');
+            $file = $request->file('avatar_image');
+
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->storeAs('avatars', $filename, 'public');
+
+            $data['avatar_image'] = $filename; 
         }
 
         $data['password']    = Hash::make($data['password']);
@@ -129,9 +134,15 @@ class ClientController extends Controller
 
         $data = $request->validated();
 
+       
         if ($request->hasFile('avatar_image')) {
-            $data['avatar_image'] = $request->file('avatar_image')
-                ->store('avatars', 'public');
+            $file = $request->file('avatar_image');
+
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->storeAs('avatars', $filename, 'public');
+
+            $data['avatar_image'] = $filename; 
         } else {
             unset($data['avatar_image']);
         }
@@ -183,7 +194,7 @@ class ClientController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
             });
         }
 

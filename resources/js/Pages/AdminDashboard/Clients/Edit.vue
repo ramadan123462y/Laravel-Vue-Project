@@ -22,9 +22,9 @@ const form = useForm({
 
 const previewUrl = ref(null);
 const currentAvatar =
-    props.client.avatar_image && props.client.avatar_image !== "default.jpg"
-        ? "/storage/" + props.client.avatar_image
-        : null;
+    props.client.avatar_image
+        ? "/storage/avatars/" + props.client.avatar_image
+        : '/images/default.png';
 
 function handleFile(e) {
     const file = e.target.files[0];
@@ -65,44 +65,13 @@ function submit() {
                 <!-- Avatar -->
                 <div>
                     <p class="text-sm font-medium text-gray-700 mb-3">Image</p>
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-20 h-20 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0"
-                        >
-                            <img
-                                v-if="previewUrl || currentAvatar"
-                                :src="previewUrl ?? currentAvatar"
-                                class="w-full h-full object-cover"
-                            />
-                            <span v-else class="text-gray-300 text-3xl"
-                                >👤</span
-                            >
-                        </div>
-                        <div>
-                            <input
-                                type="file"
-                                id="avatar"
-                                accept=".jpg,.jpeg"
-                                @change="handleFile"
-                                class="hidden"
-                            />
-                            <label
-                                for="avatar"
-                                class="cursor-pointer px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                            >
-                                Change photo
-                            </label>
-                            <p class="text-xs text-gray-400 mt-1.5">
-                                jpg/jpeg only. Leave empty to keep current.
-                            </p>
-                            <p
-                                v-if="form.errors.avatar_image"
-                                class="text-xs text-red-500 mt-1"
-                            >
-                                {{ form.errors.avatar_image }}
-                            </p>
-                        </div>
-                    </div>
+                    <div class="w-20 h-20 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0">
+    <img
+        :src="previewUrl || currentAvatar"
+        @error="($event.target.src = '/images/default.png')"
+        class="w-full h-full object-cover"
+    />
+</div>
                 </div>
 
                 <div class="border-t border-gray-100"></div>
