@@ -13,7 +13,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
     Hotel, ChevronDown, Settings, LogOut,
-    LayoutDashboard, UserCog, UserCheck, Users, BarChart3, Bed
+    LayoutDashboard, UserCog, UserCheck, Users, BarChart3, Bed, CalendarPlus
 } from 'lucide-vue-next'
 import AdminNavItem from './AdminNavItem.vue'
 
@@ -25,7 +25,6 @@ const userRoles = computed(() =>
     new Set((authUser.value?.roles ?? []).map(r => r.name))
 )
 
-
 const hasRole = (role) => userRoles.value.has(role)
 
 const allNavItems = [
@@ -35,6 +34,7 @@ const allNavItems = [
     { label: 'Manage Clients',       icon: Users,           href: '/clients',              roles: ['admin'] },
     { label: 'Statistics',           icon: BarChart3,       href: '/statistics',           roles: ['admin'] },
     { label: 'Manage Rooms',         icon: Bed,             href: '/admins/rooms',         roles: ['admin', 'manager'] },
+    { label: 'Make Reservation',     icon: CalendarPlus,    href: '/client/rooms',         roles: ['client'] },
 ]
 
 
