@@ -5,8 +5,10 @@ use App\Http\Controllers\AdminDashboard\ManagerController;
 use App\Http\Controllers\AdminDashboard\ProfileController;
 use App\Http\Controllers\AdminDashboard\ReceptionistController;
 use App\Http\Controllers\AdminDashboard\RoomController;
+use App\Http\Controllers\AdminDashboard\StatisticsController;
 use App\Http\Controllers\AdminDashboard\ReservationController;
 use App\Http\Controllers\AdminDashboard\ClientController;
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -61,6 +63,7 @@ Route::prefix('rooms')->as('rooms.')->group(function () {
     Route::post('/{room}', [RoomController::class , 'update'])->name('update');
     Route::delete('/{room}', [RoomController::class , 'destroy'])->name('destroy');
 });
+Route::get('/dashboard', [StatisticsController::class, 'index'])->name('index');
 
 Route::prefix('reservations')->as('reservations.')->group(function () {
     Route::get('/', [ReservationController::class , 'index'])->name('index');
