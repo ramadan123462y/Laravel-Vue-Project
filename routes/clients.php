@@ -18,9 +18,10 @@ Route::get('/', function () {
     ]);
 });
 
-Route::prefix('rooms')->as('rooms.')->group(function () {
 
-    Route::get('/', [RoomController::class , 'index'])->name('index');
+Route::prefix('rooms')->as('rooms.')->middleware(['auth', 'role:client'])->group(function () {
+
+    Route::get('/', [RoomController::class, 'index'])->name('index');
 });
 
 Route::prefix('reservation')->middleware(['auth', 'role:client'])->as('reservation.')->group(function () {
@@ -28,10 +29,9 @@ Route::prefix('reservation')->middleware(['auth', 'role:client'])->as('reservati
     Route::post('/create', [ReservationController::class, 'create'])->name('create');
 });
 
-Route::prefix('reservation')->as('reservation.')->group(function () {
+Route::prefix('reservation')->middleware(['auth', 'role:client'])->as('reservation.')->group(function () {
     Route::get('/success', [ReservationController::class, 'success'])->name('success');
     Route::get('/cancel', [ReservationController::class, 'cancel'])->name('cancel');
-    Route::post('/stripe/webhook', [ReservationController::class, 'handle'])->name('stripe.webhook');
 });
 
 
