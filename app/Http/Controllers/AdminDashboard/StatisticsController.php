@@ -14,7 +14,7 @@ class StatisticsController extends Controller
     public function index(Request $request) {
 
         $user = auth()->user();
-        $isReceptionist = $user->hasRole('receptionist');
+        $isAdmin = $user->hasRole('admin');
 
 
         $defaultYear = Carbon::now()->year;
@@ -37,6 +37,10 @@ class StatisticsController extends Controller
 
         $genderData = Reservation::whereYear('check_in_date', $genderYear)
             ->join('users', 'reservations.client_id', '=', 'users.id')
+            ->when(!$isAdmin, function ($query) use ($user) {
+                $query->where('users.approved_by', $user->id);
+            })
+
             ->selectRaw('users.gender, COUNT(reservations.id) as count')
             ->groupBy('users.gender')
             ->pluck('count', 'gender')
@@ -48,6 +52,10 @@ class StatisticsController extends Controller
         ];
 
         $revenueData = Reservation::whereYear('check_in_date', $revenueYear)
+            ->join('users', 'reservations.client_id', '=', 'users.id')
+            ->when(!$isAdmin, function ($query) use ($user) {
+                $query->where('users.approved_by', $user->id);
+            })
             ->selectRaw('MONTH(check_in_date) as month, SUM(paid_price) as total')
             ->groupBy('month')
             ->pluck('total', 'month')
@@ -60,6 +68,12 @@ class StatisticsController extends Controller
 
         $allCountries = Reservation::whereYear('check_in_date', $countriesYear)
             ->with('client.country')
+                ->when(!$isAdmin, function ($query) use ($user) {
+        $query->whereHas('client', function ($q) use ($user) {
+            $q->where('approved_by', $user->id);
+        });
+    })
+
             ->get()
             ->groupBy(function($reservation) {
                 return $reservation->client?->country?->official_name ?? 'Unknown';
@@ -84,6 +98,10 @@ class StatisticsController extends Controller
 
         $topClients = Reservation::whereYear('check_in_date', $clientsYear)
             ->join('users', 'reservations.client_id', '=', 'users.id')
+    ->when(!$isAdmin, function ($query) use ($user) {
+        $query->where('users.approved_by', $user->id);
+    })
+
             ->selectRaw('users.name, COUNT(reservations.id) as total')
             ->groupBy('users.name')
             ->orderByDesc('total')
