@@ -18,7 +18,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::prefix('rooms')->middleware(['auth', 'role:client'])->as('rooms.')->group(function () {
+Route::prefix('rooms')->as('rooms.')->group(function () {
 
     Route::get('/', [RoomController::class , 'index'])->name('index');
 });
