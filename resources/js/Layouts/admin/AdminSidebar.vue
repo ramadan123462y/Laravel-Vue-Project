@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { Link, usePage } from '@inertiajs/vue3'
+import { Link, router, usePage } from '@inertiajs/vue3'
 import {
     Sidebar, SidebarContent, SidebarFooter,
     SidebarGroup, SidebarGroupLabel,
@@ -21,8 +21,28 @@ import {
 import AdminNavItem from './AdminNavItem.vue'
 
 const page = usePage()
+const DEFAULT_AVATAR_PATH = '/images/default.png'
 
 const authUser = computed(() => page.props.auth?.user)
+const profileHref = computed(() => page.props.auth?.profile_route ?? '/profile')
+
+const avatarSrc = computed(() => {
+    const path = authUser.value?.avatar_image
+
+    if (!path || path === 'default.png') {
+        return DEFAULT_AVATAR_PATH
+    }
+
+    if (
+        path.startsWith('http://') ||
+        path.startsWith('https://') ||
+        path.startsWith('/')
+    ) {
+        return path
+    }
+
+    return `/storage/${path}`
+})
 
 const userRoles = computed(() =>
     new Set((authUser.value?.roles ?? []).map(r => r.name))
@@ -136,10 +156,11 @@ const roleLabel = computed(() =>
                         <p class="text-[11.5px] text-muted-foreground">{{ userEmail }}</p>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem as-child>
-                        <Link :href="profileHref" class="flex items-center gap-2 cursor-pointer">
-                            <Settings class="w-4 h-4" /> Profile Settings
-                        </Link>
+                    <DropdownMenuItem
+                        class="cursor-pointer"
+                        @select="router.visit(profileHref)"
+                    >
+                        <Settings class="w-4 h-4" /> Profile Settings
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem as-child>
