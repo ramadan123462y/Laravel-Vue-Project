@@ -65,6 +65,7 @@ function confirm() {
     form.transform(data => ({
         ...data,
         room_id: selected.value.id,
+        room_capacity: selected.value.capacity,
     })).post('/client/reservation/create', {
         onSuccess: () => {
             open.value = false

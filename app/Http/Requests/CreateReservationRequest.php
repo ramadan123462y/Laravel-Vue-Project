@@ -24,11 +24,12 @@ class CreateReservationRequest extends FormRequest
             'check_in_date'  => ['required', 'date', 'after_or_equal:today'],
             'check_out_date' => ['required', 'date', 'after:check_in_date'],
             'accompany_number' => [
-                'required',
-                'integer',
-                'min:0',
+            'required',
+            'integer',
+            'min:0',
                 function ($attribute, $value, $fail) use ($room) {
-                    if ($value > $room->capacity) {
+                    $totalPeople = $value + 1;
+                    if ($totalPeople > $room->capacity) {
                         $fail("The accompany number cannot exceed the room capacity ({$room->capacity}).");
                     }
                 },
