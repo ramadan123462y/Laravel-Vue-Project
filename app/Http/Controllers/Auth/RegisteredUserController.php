@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Country;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -35,17 +36,36 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'national_id' => 'required|string|unique:users,national_id',
+            'national_id' => 'required|numeric|digits:14|starts_with:2,3|unique:users,national_id',
+            'mobile' => 'required|string|regex:/^[+]?[0-9]{10,15}$/|unique:users,mobile',
             'avatar_image' => 'nullable|image|mimes:jpg,jpeg|max:2048',
-            'country' => 'required|string',
+            'country' => 'required|string|exists:lc_countries,official_name',
             'gender' => 'required|string|in:male,female',
         ]);
 
-        // Handle Avatar Upload
+        // Find country by name to get ID
+        $country = Country::where('official_name', $request->country)->first();
+        $countryId = $country ? $country->id : null;
+
+        // Handle Avatar Upload - Improved storage
         $avatarName = 'default.png';
         if ($request->hasFile('avatar_image')) {
-            $avatarName = time() . '.' . $request->avatar_image->extension();
-            $request->avatar_image->move(public_path('avatars'), $avatarName);
+            $file = $request->file('avatar_image');
+            
+            // Validate file is actually an image
+            if ($file->isValid() && in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg'])) {
+                // Create unique filename with user identifier
+                $avatarName = 'user_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                // Ensure avatars directory exists
+                $avatarsPath = public_path('avatars');
+                if (!is_dir($avatarsPath)) {
+                    mkdir($avatarsPath, 0755, true);
+                }
+                
+                // Move file to avatars directory
+                $file->move($avatarsPath, $avatarName);
+            }
         }
 
         $user = User::create([
@@ -53,8 +73,9 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'national_id' => $request->national_id,
+            'mobile' => $request->mobile,
             'avatar_image' => $avatarName,
-            'country' => $request->country,
+            'country_id' => $countryId,
             'gender' => $request->gender,
             'is_approved' => false,
         ]);

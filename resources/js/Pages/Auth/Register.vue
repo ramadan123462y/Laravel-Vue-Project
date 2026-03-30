@@ -18,6 +18,7 @@ const form = useForm({
     password: '',
     password_confirmation: '',
     national_id: '',
+    mobile: '',
     avatar_image: null,
     country: '',
     gender: '',
@@ -28,6 +29,12 @@ const submit = () => {
         onFinish: () => form.reset('password', 'password_confirmation'),
         forceFormData: true,
     });
+};
+
+// Ensure only numbers can be entered in national ID
+const handleNationalIdInput = (event) => {
+    event.target.value = event.target.value.replace(/[^0-9]/g, '');
+    form.national_id = event.target.value;
 };
 </script>
 
@@ -72,8 +79,15 @@ const submit = () => {
                         <!-- National ID -->
                         <div class="space-y-2">
                             <Label for="national_id" class="text-sm font-semibold text-slate-700">National ID</Label>
-                            <Input id="national_id" v-model="form.national_id" type="text" placeholder="ID Number"  class="h-10" />
+                            <Input id="national_id" v-model="form.national_id" @input="handleNationalIdInput" type="text" placeholder="National ID (14 digits)"  class="h-10" maxlength="14" />
                             <InputError :message="form.errors.national_id" />
+                        </div>
+
+                        <!-- Mobile Number -->
+                        <div class="space-y-2">
+                            <Label for="mobile" class="text-sm font-semibold text-slate-700">Mobile Number</Label>
+                            <Input id="mobile" v-model="form.mobile" type="tel" placeholder="+1234567890"  class="h-10" />
+                            <InputError :message="form.errors.mobile" />
                         </div>
 
                         <!-- Avatar -->

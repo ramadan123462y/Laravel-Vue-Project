@@ -30,9 +30,18 @@ class ReservationController extends Controller
         // Fetching all reservations with relationships (client and room)
         $reservations = $this->reservationRepository->paginate(15, ['client', 'room'], $filters);
 
+        // Stats for executive cards
+        $stats = [
+            'total'    => \App\Models\Reservation::count(),
+            'pending'  => \App\Models\Reservation::where('status', 'pending')->count(),
+            'approved' => \App\Models\Reservation::where('status', 'approved')->count(),
+            'revenue'  => \App\Models\Reservation::where('status', 'approved')->sum('paid_price'),
+        ];
+
         return Inertia::render('AdminDashboard/Reservations/Index', [
             'reservations' => $reservations,
-            'filters' => $filters,
+            'filters'      => $filters,
+            'stats'        => $stats,
         ]);
     }
 
