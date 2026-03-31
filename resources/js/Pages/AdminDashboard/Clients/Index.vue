@@ -71,6 +71,10 @@ function countryName(id) {
     return props.countries.find((c) => c.id === id)?.name ?? "—";
 }
 
+function exportExcel() {
+    window.location.href = route('admins.clients.export');
+}
+
 const columns = computed(() => {
     const cols = [
         { accessorKey: "name", header: "Client Details" },
@@ -180,6 +184,16 @@ function goToPage(url) {
                 >
                     ← Pending Clients
                 </Button>
+
+            <Button
+    v-if="canCreate"
+    variant="outline"
+    @click="exportExcel"
+>
+    Export Excel
+</Button>
+
+                
 
                 <!-- Add Client — admin + manager only -->
                 <Link v-if="canCreate" :href="route('admins.clients.create')">
