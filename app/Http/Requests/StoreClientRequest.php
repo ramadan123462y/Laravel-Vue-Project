@@ -25,7 +25,7 @@ class StoreClientRequest extends FormRequest
          return [
             'name' => 'required|string|max:255',
             'email' =>  'required|email|unique:users,email',
-            'password' =>'required|string|confirmed|min:8',
+            'password' =>'required|string|confirmed|min:6',
             'country_id'   => 'required|integer|exists:lc_countries,id',
             'gender' => 'required|in:male,female',
             'mobile' => 'required|regex:/^[+]?[0-9]{10,15}$/|unique:users,mobile',
