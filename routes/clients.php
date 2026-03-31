@@ -7,16 +7,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-
-    $clients = User::with('country')->role('client')->get();
-    $receptionists = User::role('receptionist')->get();
-
-    return Inertia::render('ClientDashboard/ClientDashboard', [
-        'clients' => $clients,
-        'receptionists' => $receptionists
-    ]);
-});
 
 
 Route::prefix('rooms')->as('rooms.')->middleware(['auth', 'role:client'])->group(function () {

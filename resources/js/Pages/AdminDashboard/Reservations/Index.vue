@@ -261,7 +261,7 @@ const formatDate = (dateString) => {
                                     <img
                                         v-if="res.client?.avatar_image"
                                         :src="
-                                            '/avatars/' +
+                                            '/storage/' +
                                             res.client.avatar_image
                                         "
                                         class="h-full w-full object-cover"
