@@ -47,9 +47,9 @@ class RegisteredUserController extends Controller
         $country = Country::where('official_name', $request->country)->first();
         $countryId = $country ? $country->id : null;
 
-        // Handle Avatar Upload - Improved storage
+        // Store avatar image in storage/app/public/clients/avatars
         $avatarName = 'default.png';
-       if ($request->hasFile('avatar_image')) {
+     if ($request->hasFile('avatar_image')) {
             $file = $request->file('avatar_image');
 
             $filename = time() . '_' . $file->getClientOriginalName();
