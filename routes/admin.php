@@ -87,6 +87,7 @@ Route::middleware(['auth', 'role:admin|manager|receptionist'])
             Route::get('/',                   [ClientController::class, 'index'])->name('index');
             Route::get('/create',             [ClientController::class, 'create'])->name('create');
             Route::post('/',                  [ClientController::class, 'store'])->name('store');
+            Route::get('clients/export', [ClientController::class, 'export'])->name('export');
             Route::get('/approved',           [ClientController::class, 'approvedClients'])->name('approved');
             Route::get('/{client}/edit',      [ClientController::class, 'edit'])->name('edit');
             Route::post('/{client}/update', [ClientController::class, 'update'])->name('update');

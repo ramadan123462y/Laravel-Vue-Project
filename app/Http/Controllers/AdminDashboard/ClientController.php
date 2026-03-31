@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use App\Exports\ClientsExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class ClientController extends Controller
 {
@@ -68,7 +71,7 @@ class ClientController extends Controller
             'countries' => $countries,
             'filters'   => $request->only(['search', 'country_id', 'gender', 'status']),
             'canCreate' => $user->hasAnyRole(['admin', 'manager']),
-            'canDelete' => $user->hasRole('admin'),
+            'canDelete' => $user->hasRole(['admin', 'manager']),
             'role'      => $user->getRoleNames()->first(),
         ]);
     }
@@ -137,6 +140,9 @@ class ClientController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('avatar_image')) {
+            if ($client->avatar_image && $client->avatar_image !== 'default.png') {
+                Storage::disk('public')->delete('avatars/' . $client->avatar_image);
+            }
             $file = $request->file('avatar_image');
 
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -161,9 +167,16 @@ class ClientController extends Controller
         }
 
         if ($client->reservations()->exists()) {
-            return back()->withErrors(['error' => 'Cannot delete a client with reservations.']);
+            return back()->with('error', 'Client has reservations.');
         }
+        if (!empty($client->avatar_image) && $client->avatar_image !== 'default.png') {
 
+            $path = 'avatars/' . $client->avatar_image;
+
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+        }
         $client->delete();
 
         return redirect()->route('admins.clients.index')
@@ -172,10 +185,6 @@ class ClientController extends Controller
 
     public function approve(User $client)
     {
-        if ($client->is_approved) {
-            return back()->withErrors(['error' => 'Client is already approved.']);
-        }
-
         $client->update([
             'is_approved' => true,
             'approved_by' => auth()->id(),
@@ -221,5 +230,15 @@ class ClientController extends Controller
             'role'      => $user->getRoleNames()->first(),
             'pageTitle' => 'My Approved Clients',
         ]);
+    }
+
+    public function export()
+    {
+        // Only admin and manager can export
+        if (!auth()->user()->hasAnyRole(['admin', 'manager'])) {
+            abort(403);
+        }
+
+        return Excel::download(new ClientsExport(), 'clients_' . now()->format('Y_m_d') . '.xlsx');
     }
 }
