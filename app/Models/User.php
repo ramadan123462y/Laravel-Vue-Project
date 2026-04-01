@@ -6,11 +6,12 @@ namespace App\Models;
 use Cog\Contracts\Ban\Bannable as BannableContract;
 use Cog\Laravel\Ban\Traits\Bannable;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements BannableContract
@@ -19,6 +20,7 @@ class User extends Authenticatable implements BannableContract
     use HasRoles;
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -72,7 +74,7 @@ class User extends Authenticatable implements BannableContract
 
     // ── Relationships ──────────────────────────────
 
-   
+
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class, 'country_id');
