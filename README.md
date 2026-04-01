@@ -1,59 +1,238 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Simple Hotel System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
+Simple Hotel System is a hotel management system built with Laravel, Vue.js, and Inertia.js. It is designed to manage hotels, users, rooms, floors, reservations, approvals, and role-based access in one application.
 
-## About Laravel
+The project separates responsibilities between administrators, managers, receptionists, and clients. The backend handles authorization, approvals, reservations, notifications, scheduling, and API access, while the frontend provides the dashboard and booking flow through Vue and Inertia.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## How the System Works
+- Admin has full access to the system and can manage all core modules and permissions.
+- Manager works inside the operational dashboard and manages floors, rooms, receptionists, clients, and statistics according to the assigned permissions.
+- Receptionist reviews pending client accounts, approves clients, and views approved clients and their reservations.
+- Client can register an account, wait for approval, browse available rooms, create reservations, and complete payment using Stripe.
+- When a client is approved, the system sends a notification so the client can continue using the platform.
+- The application also sends scheduled reminder notifications to inactive approved clients.
+- Some shared data, such as countries, is loaded through a package that supports caching.
+- The application includes an API route protected with Sanctum for authenticated room access.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Roles and Permissions
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Admin
+- Has full access across the system.
+- Manages managers.
+- Manages receptionists.
+- Manages floors and rooms.
+- Manages clients and client approvals.
+- Reviews reservations and statistics.
+- Exports clients to Excel.
 
-## Learning Laravel
+### Manager
+- Manages floors assigned through the dashboard.
+- Manages rooms and room-related operations.
+- Manages receptionists.
+- Manages clients and can approve them.
+- Views approved clients and client reservations.
+- Accesses statistics for operational reporting.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Receptionist
+- Reviews pending client accounts.
+- Approves client registrations.
+- Views approved clients.
+- Views client reservations.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Client
+- Registers a new account.
+- Waits for approval before using booking features.
+- Views available rooms.
+- Creates reservations.
+- Pays for reservations using Stripe.
+- Manages profile information and views personal reservation data.
 
-## Laravel Sponsors
+## Main Modules
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Authentication
+The system uses Laravel authentication for login, registration, email verification, password reset, and session-based access. Clients register through the public flow, while staff accounts are managed from the dashboard.
 
-### Premium Partners
+### Profile Management
+All roles can update profile information such as personal details and account settings from the profile area.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Managers Management
+Admins can create, view, update, and delete manager accounts. This module is used to define who is responsible for hotel operations.
 
-## Contributing
+### Receptionists Management
+Admins and managers can manage receptionist accounts. This module supports staff creation, updates, and access control for receptionist users.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Clients Management
+Admins, managers, and receptionists work with client records depending on role. The module covers client registration review, approval status, and client account administration.
 
-## Code of Conduct
+### Floors Management
+Admins and managers manage hotel floors. Floors are used as the structural level for organizing room records.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Rooms Management
+Admins and managers create and maintain room records, including capacity, floor assignment, and pricing.
 
-## Security Vulnerabilities
+### Available Rooms
+Clients can browse rooms that are available for reservation. Room availability is checked against reservation dates before a booking is accepted.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Reservations
+Clients create reservations from the available rooms flow. Reservation records store booking details, payment session data, and status updates after Stripe checkout or webhook processing.
 
-## License
+### Approved Clients
+Receptionists can review approved clients separately from pending accounts and inspect their reservation information when needed.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Statistics
+Admins and managers can access operational statistics such as revenue, client activity, gender-based reservation data, and country-based summaries.
+
+### Export Clients to Excel
+Admins and managers can export client data to Excel files for reporting or review.
+
+### Deployment
+The project includes deployment responsibility as part of the team scope and is structured as a standard Laravel + Vite application for local and server environments.
+
+## Tech Stack
+- Laravel
+- Vue.js
+- Inertia.js
+- Tailwind CSS
+- shadcn-vue
+- TanStack Table
+- Chart.js
+- MySQL
+
+## Packages Used
+- `spatie/laravel-permission`: handles roles and permissions for admin, manager, receptionist, and client access.
+- `cybercog/laravel-ban`: supports banning restricted users from protected areas of the application.
+- `laravel/sanctum`: protects authenticated API access.
+- `lwwcas/laravel-countries`: provides country data used in client-related forms and statistics.
+- `maatwebsite/excel`: exports client data to Excel sheets.
+- `stripe/stripe-php`: handles Stripe checkout sessions, payment callbacks, and reservation payment flow.
+- Laravel Notifications: sends approval and reminder notifications.
+- Laravel Scheduler / Queues: runs scheduled reminders and processes queued notifications.
+
+## Team Responsibilities
+- **Amr Shokry**
+  - Responsible for Managers for Admin users
+  - Responsible for Floors for Admin and Manager users
+  - Responsible for Statistics for Admin and Manager users
+
+- **Ramadan Mohamed**
+  - Responsible for Rooms for Admin and Manager users
+  - Responsible for Available Rooms for Client users
+  - Responsible for Deployment
+
+- **Kareem Kadry**
+  - Responsible for Clients for Admin, Manager, and Receptionist users
+  - Responsible for Approved Clients for Receptionist users
+  - Responsible for Export Clients as Excel Sheets for Admin and Manager users
+
+- **Ahmed Ibrahim Elemam**
+  - Responsible for Profile for Client, Admin, Manager, and Receptionist users
+  - Responsible for Manage Receptionists for Admin and Manager users
+
+- **Mawadah Hassan**
+  - Responsible for the Landing Page for all users
+  - Responsible for Auth and Laravel Cache for all users
+  - Responsible for Reservations for all users
+
+## Installation
+Clone the repository and move into the project directory:
+
+```bash
+git clone git@github.com:ramadan123462y/Laravel-Vue-Project.git
+cd Laravel-Vue-Project
+```
+
+Install the backend and frontend dependencies:
+
+```bash
+composer install
+npm install
+```
+
+Create the environment file and generate the application key:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Configure your database connection in `.env`, then run the database migrations:
+
+```bash
+php artisan migrate
+```
+
+Seed the countries package tables:
+
+```bash
+php artisan db:seed --class="Lwwcas\\LaravelCountries\\Database\\Seeders\\LwwcasDatabaseSeeder"
+```
+
+Run the project seeders:
+
+```bash
+php artisan db:seed
+```
+
+Create the storage symlink:
+
+```bash
+php artisan storage:link
+```
+
+Start the local development servers:
+
+```bash
+php artisan serve
+npm run dev
+```
+
+If you want queued notifications to run locally, start a queue worker in a separate terminal:
+
+```bash
+php artisan queue:listen
+```
+
+## Environment Notes
+Make sure the local environment is configured for:
+- Database credentials
+- Mail settings
+- Queue connection
+- Stripe keys
+- Cache settings if needed
+
+The countries package data should be seeded before using registration and client forms, because the application reads country values from the `lc_countries` tables.
+
+## Default Admin Account
+- Email: `admin@admin.com`
+- Password: `123456`
+
+## Important Technical Notes
+- Prices are stored in cents in the database and displayed in dollars in the application.
+- Tables use TanStack Table with server-side pagination.
+- Charts use Chart.js and data is loaded dynamically from the backend.
+- Countries come from the Laravel Countries package.
+- Delete actions should be confirmed and handled with asynchronous requests through Inertia.
+- Roles and permissions are handled using Spatie Permission.
+- API authentication uses Sanctum.
+- Forgot password should work with the default Laravel authentication flow.
+- Notifications for approval must be queued.
+- Daily scheduled reminders are sent to inactive clients.
+
+## Running the Project
+Run the backend and frontend development servers:
+
+```bash
+php artisan serve
+npm run dev
+```
+
+Run the queue worker in another terminal if you want queued notifications to be processed locally:
+
+```bash
+php artisan queue:listen
+```
+
+Then open the local application in the browser and either:
+- Log in with the seeded admin account
+- Register a client account and continue through the approval flow
